@@ -51,8 +51,7 @@ for f in glob.glob(os.path.join(SRC, "gallery", "GS Snapshot *.jpg")):
     save(im, f"gallery-gs-{n:02d}.webp", 1080, 80)
     save(im, f"gallery-gs-{n:02d}-640.webp", 640, 74)
 # Social share image
-og = ImageOps.fit(load("poster-square.jpg").convert("RGB"), (1200, 630), Image.LANCZOS, centering=(0.5, 0.38))
-og.save(os.path.join(OUT, "og-ghost-stories.jpg"), "JPEG", quality=82); print("og-ghost-stories.jpg")
+# Social share image: rendered from assets/og/og-template.html (see README, SEO section)
 
 # ---- Generated textures (Pillow only) ----------------------------------
 def octave(w, h, cx, cy):

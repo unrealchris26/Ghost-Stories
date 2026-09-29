@@ -336,7 +336,7 @@
 
   /* Current section in the nav */
   const navLinks = $$("[data-nav-link]");
-  const sections = navLinks.map((a) => $(a.getAttribute("href"))).filter(Boolean);
+  const sections = navLinks.map((a) => a.getAttribute("href")).filter((h) => h.startsWith("#")).map((h) => $(h)).filter(Boolean);   // on sub-pages links are "/#top" etc.: nothing to track
   if (sections.length && "IntersectionObserver" in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {

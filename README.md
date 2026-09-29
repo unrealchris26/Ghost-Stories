@@ -53,6 +53,16 @@ What `POST /api/lead` forwards to the webhook, as JSON:
 
 In the GHL workflow, map `email` to the contact's email in the Inbound Webhook trigger, then add whatever tags or actions you want. A hidden honeypot field (`company`) silently drops bot submissions.
 
+## SEO and social sharing
+
+- Every page has its own title, description, canonical URL and Open Graph / Twitter tags, all pointing at `https://ghoststories.vegas`. Privacy, Terms and 404 get theirs from `_source/build_pages.py` (edit there, then run it).
+- The homepage carries a `TheaterEvent` JSON-LD block (performer, venue, weekly showtimes, ticket offer). Update it if showtimes, price or the ticket link change.
+- `robots.txt` and `sitemap.xml` are at the root.
+- Share image: `assets/img/og-image.jpg` (1200x630) is a placeholder rendered from `assets/og/og-template.html`. Open the template at exactly 1200x630 (add `?guides` to see the 1000x500 safe zone), screenshot it, and save over the JPG. Replace it with a final design when you have one.
+- **After every deploy that changes share tags or the image**, re-scrape the page: Facebook and LinkedIn cache old previews.
+  - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/ (paste the URL, click "Scrape Again")
+  - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
+
 ## Swapping images
 
 Every placeholder has a `<!-- TODO -->` comment next to it in `index.html`. Two ways to swap:

@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+  Open Graph share image template, 1200 x 630.
+  Render: open this file at exactly 1200 x 630 and screenshot it, then save as
+  /assets/img/og-image.jpg (JPEG, about 85% quality). It was rendered that way
+  with headless Chrome for the first version.
+
+  TODO: replace with a final designed render (e.g. with show photography) when available.
+  Keep all text inside the dashed safe zone (1000 x 500, centred) so Facebook,
+  LinkedIn, iMessage and WhatsApp crops never cut it. Add ?guides to the URL
+  to show the safe zone while designing.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ghost Stories OG image</title>
+<style>
+  @font-face { font-family: "Enigma"; src: url("../fonts/enigma.woff2") format("woff2"); }
+  @font-face { font-family: "Special Elite"; src: url("../fonts/special-elite-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Josefin Sans"; src: url("../fonts/josefin-sans-latin.woff2") format("woff2"); font-weight: 100 700; }
+  html, body { margin: 0; }
+  .og {
+    position: relative; width: 1200px; height: 630px; overflow: hidden;
+    background: #0B1315;
+  }
+  /* candle glow, fog, vignette */
+  .og::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 55% 60% at 50% 46%, rgba(232, 196, 138, 0.13), transparent 70%),
+      radial-gradient(ellipse 80% 70% at 50% 110%, rgba(74, 15, 20, 0.45), transparent 70%);
+  }
+  .fog { position: absolute; left: -10%; right: -10%; bottom: -8%; height: 70%; background: url("../img/fog-layer.webp") repeat-x left bottom / 60% 100%; opacity: 0.55; }
+  .fog--2 { bottom: 20%; height: 50%; opacity: 0.28; background-position: 40% bottom; }
+  .og::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 48%, transparent 42%, rgba(3, 7, 8, 0.9) 100%);
+  }
+  .safe {
+    position: absolute; z-index: 1; left: 100px; top: 65px; width: 1000px; height: 500px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  }
+  .guides .safe { outline: 2px dashed rgba(255, 0, 255, 0.6); }
+  .title {
+    font-family: "Enigma", "Limelight", serif; font-size: 108px; line-height: 1; letter-spacing: 0.02em;
+    color: #C9AB81; white-space: nowrap; margin-right: -0.02em;
+    text-shadow: 0 0 40px rgba(232, 196, 138, 0.25);
+  }
+  .sub {
+    display: inline-block; margin-top: 22px; white-space: nowrap;
+    font-family: "Special Elite", "Courier New", monospace; font-size: 26px; text-transform: uppercase; color: #C9AB81;
+  }
+  .lie { color: #FFFFFF; }
+  .venue {
+    position: absolute; left: 0; right: 0; bottom: 42px; text-align: center;
+    font-family: "Josefin Sans", sans-serif; font-weight: 600; font-size: 22px; letter-spacing: 0.3em;
+    font-variant: small-caps; text-transform: lowercase; color: #C9AB81;
+  }
+</style>
+</head>
+<body>
+  <div class="og" id="og">
+    <div class="fog"></div><div class="fog fog--2"></div>
+    <div class="safe">
+      <div class="title" id="t">GHOST STORIES</div>
+      <div class="sub" id="s">Is Seeing Really Be<span class="lie">lie</span>ving?</div>
+      <div class="venue">1923 Prohibition Bar · Mandalay Bay, Las Vegas</div>
+    </div>
+  </div>
+<script>
+  // Fit the subtitle to the title's width (same lockup as the website)
+  if (location.search.includes("guides")) document.getElementById("og").classList.add("guides");
+  document.fonts.ready.then(() => {
+    const t = document.getElementById("t"), s = document.getElementById("s");
+    const r = document.createRange(); r.selectNodeContents(t);
+    const target = r.getBoundingClientRect().width - parseFloat(getComputedStyle(t).letterSpacing);
+    const ls = (target - s.getBoundingClientRect().width) / (s.textContent.length - 1);
+    s.style.letterSpacing = ls + "px"; s.style.marginRight = -ls + "px";
+    document.body.dataset.ready = "1";
+  });
+</script>
+</body>
+</html>

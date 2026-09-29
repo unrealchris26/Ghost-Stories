@@ -4,10 +4,34 @@ the nav or footer in index.html:  python _source/build_pages.py"""
 import re
 
 src = open("index.html", encoding="utf-8").read()
-HEAD = """  <meta name="theme-color" content="#0B1315">
-  <meta name="robots" content="{robots}">
+SITE = "https://ghoststories.vegas"
+OG_IMG = SITE + "/assets/img/og-image.jpg"
+SOCIAL = """  <meta name="robots" content="{robots}">
+  <link rel="canonical" href="{url}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ghost Stories">
+  <meta property="og:title" content="{og_title}">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:url" content="{url}">
+  <meta property="og:image" content="{og_img}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ghost Stories: Is Seeing Really Believing? — Kent Axell at 1923 Prohibition Bar">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{og_title}">
+  <meta name="twitter:description" content="{desc}">
+  <meta name="twitter:image" content="{og_img}">
+
+  <!-- Theme & icons -->
+  <meta name="theme-color" content="#0B1315">
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="/assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">"""
+HEAD = """  <link rel="preload" href="/assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/styles.css">
   <script src="/assets/js/main.js" defer></script>"""
 sprite = re.search(r"  <!-- Icon sprite.*?</svg>\n", src, re.S).group(0)
@@ -19,7 +43,7 @@ chrome, footer = to_home(chrome), to_home(footer)
 footer = re.sub(r'\s*<div class="planchette".*?</p>\s*</div>\n', "\n", footer, flags=re.S)
 
 
-def page(fname, title, desc, heading, sub, updated, body, robots="index,follow"):
+def page(fname, title, desc, heading, sub, updated, body, robots="index,follow", og_title=""):
     stamp = f'<p class="legal__updated">Last updated {updated}</p>' if updated else ""
     html = f"""<!doctype html>
 <html lang="en">
@@ -28,7 +52,8 @@ def page(fname, title, desc, heading, sub, updated, body, robots="index,follow")
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content="{desc}">
-{HEAD.format(robots=robots)}
+{SOCIAL.format(robots=robots, url=SITE + "/" + ("" if fname == "index.html" else fname), og_title=og_title or title, desc=desc, og_img=OG_IMG)}
+{HEAD}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -137,11 +162,11 @@ NOT_FOUND = """        <p class="lede center">Whatever was here has crossed over
         <p class="center">The page you were looking for doesn’t exist, or it only appears after midnight.</p>
         <p class="center"><a class="btn btn--gold" href="/">Return to the Séance</a></p>"""
 
-page("privacy.html", "Privacy Policy | Ghost Stories with Kent Axell",
+page("privacy.html", "Privacy Policy | Ghost Stories | 1923 Prohibition Bar, Las Vegas",
      "How Kent Axell collects, uses and protects personal information submitted through the Ghost Stories website.",
-     "Privacy <strong>Policy</strong>", "What we keep, and why", "September 28, 2026", PRIVACY)
-page("terms.html", "Terms &amp; Conditions | Ghost Stories with Kent Axell",
+     "Privacy <strong>Policy</strong>", "What we keep, and why", "September 28, 2026", PRIVACY, og_title="Privacy Policy · Ghost Stories")
+page("terms.html", "Terms &amp; Conditions | Ghost Stories | 1923 Prohibition Bar, Las Vegas",
      "Terms for using the Ghost Stories website and booking the show, private séances and group events.",
-     "Terms &amp; <strong>Conditions</strong>", "The fine print, by candlelight", "September 28, 2026", TERMS)
+     "Terms &amp; <strong>Conditions</strong>", "The fine print, by candlelight", "September 28, 2026", TERMS, og_title="Terms &amp; Conditions · Ghost Stories")
 page("404.html", "Page Not Found | Ghost Stories", "This page has crossed over.",
      "Nothing <strong>Here</strong>", "Error 404", "", NOT_FOUND, robots="noindex")
