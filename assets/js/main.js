@@ -442,14 +442,29 @@
     const video = $("[data-video]", dialog);
     const title = $("[data-video-title]", dialog);
     $$("[data-video-open]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      const open = () => {
         video.src = btn.dataset.videoSrc;
         title.textContent = btn.dataset.videoTitle || "";
         dialog.showModal();
         video.play().catch(() => {});
+      };
+      btn.addEventListener("click", () => {
+        if (!("videoLaunch" in btn.dataset) || reduceMotion.matches) { dialog.classList.remove("is-from-origin"); open(); return; }
+        // Play button: ring burst, then the player grows out of the button
+        btn.classList.remove("is-launching"); void btn.offsetWidth; btn.classList.add("is-launching");
+        setTimeout(() => {
+          const b = btn.getBoundingClientRect();
+          dialog.classList.add("is-from-origin");
+          open();
+          const d = dialog.getBoundingClientRect();
+          dialog.style.setProperty("--ox", `${b.left + b.width / 2 - d.left}px`);
+          dialog.style.setProperty("--oy", `${b.top + b.height / 2 - d.top}px`);
+        }, 260);
+        setTimeout(() => btn.classList.remove("is-launching"), 800);
       });
+
     });
-    dialog.addEventListener("close", () => { video.pause(); video.removeAttribute("src"); video.load(); });
+    dialog.addEventListener("close", () => { video.pause(); video.removeAttribute("src"); video.load(); dialog.classList.remove("is-from-origin"); });
     dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
   }
 

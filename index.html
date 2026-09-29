@@ -96,6 +96,10 @@
       <div class="hero__shade" aria-hidden="true"></div>
 
       <div class="container hero__content" data-lockup>
+        <!-- Phones only: replaces the "Watch the Trailer" button -->
+        <button class="hero__play" type="button" data-video-open data-video-launch data-video-src="/assets/video/ghost-stories-loop.webm" data-video-title="Ghost Stories trailer">
+          <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg><span class="sr-only">Watch the trailer</span>
+        </button>
         <h1 class="hero__title" id="hero-title"><span class="hero__title-glow" data-lockup-title>Ghost Stories</span></h1>
         <p class="hero__subtitle" role="doc-subtitle" aria-label="Is Seeing Really Believing?" data-lockup-sub><span class="lockup-fit">Is Seeing Really Be<span class="lie">lie</span>ving?</span></p>
         <!-- TODO: keep in sync with the FAQ ("How long is the show?") and the ticketing page -->
@@ -109,7 +113,7 @@
         </ul>
         <div class="hero__actions">
           <a class="btn btn--gold" href="https://fareharbor.com/embeds/book/1923lv/items/463120/calendar/2026/09/?flow=875034&amp;full-items=yes" target="_blank" rel="noopener" data-tickets>Get Tickets</a>
-          <button class="btn btn--ghost" type="button" data-video-open data-video-src="/assets/video/ghost-stories-loop.webm" data-video-title="Ghost Stories trailer">
+          <button class="btn btn--ghost hero__trailer" type="button" data-video-open data-video-src="/assets/video/ghost-stories-loop.webm" data-video-title="Ghost Stories trailer">
             <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Watch the Trailer
           </button>
         </div>
