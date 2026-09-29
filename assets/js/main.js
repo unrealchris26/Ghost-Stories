@@ -138,7 +138,8 @@
     const leftCurtain = $('[data-curtain="left"]', stage);
     const rightCurtain = $('[data-curtain="right"]', stage);
     const steps = $$("[data-stage-step]", stage);
-    const THRESHOLDS = [0.4, 0.5, 0.62];                 // heading, paragraph, button
+    const THRESHOLDS = [0.4, 0.5, 0.62];                 // heading, paragraph, button (desktop)
+    const phone = window.matchMedia("(max-width: 767.98px)");
     const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
     const progress = () => {
@@ -157,6 +158,9 @@
     const measure = () => {
       const drape = window.innerWidth < 768 ? 16 : window.innerWidth * 0.06;
       finalScale = clamp(drape / (leftCurtain.offsetWidth || 1), 0.03, 0.3);
+      // Phones: the text sits above the stage, so the curtains cover only the stage
+      const top = phone.matches ? scene.offsetTop + "px" : "";
+      leftCurtain.style.top = rightCurtain.style.top = top;
     };
 
     const render = (velocity) => {
@@ -165,7 +169,7 @@
       const scale = (1 - e * (1 - finalScale)).toFixed(4);   // fabric bunches toward its own edge
       leftCurtain.style.transform = `scaleX(${scale}) skewX(${skew.toFixed(2)}deg)`;
       rightCurtain.style.transform = `scaleX(${scale}) skewX(${(-skew).toFixed(2)}deg)`;
-      steps.forEach((el, i) => { if (e >= THRESHOLDS[i]) el.classList.add("is-shown"); });
+      if (!phone.matches) steps.forEach((el, i) => { if (e >= THRESHOLDS[i]) el.classList.add("is-shown"); });
     };
 
     // Time-based follow (same heavy feel at 60Hz or 120Hz); ~90% of the way in ~0.55s
@@ -183,9 +187,17 @@
       else { running = false; last = 0; }
     };
 
+    // Phones: reveal the copy as soon as it enters the screen, independent of the curtains
+    new IntersectionObserver(([entry], obs) => {
+      if (!phone.matches || !entry.isIntersecting) return;
+      steps.forEach((el) => el.classList.add("is-shown"));
+      obs.disconnect();
+    }, { rootMargin: "0px 0px -8% 0px" }).observe($(".about-stage__content", stage));
+
     measure();
     render(0);
     window.addEventListener("resize", () => { measure(); render(0); });
+    if (document.fonts) document.fonts.ready.then(() => { measure(); render(0); });   // text height can shift the stage
     new IntersectionObserver(([entry]) => {
       near = entry.isIntersecting;
       if (near && !running) { running = true; requestAnimationFrame(tick); }
@@ -308,12 +320,10 @@
   const toggle = $("[data-menu-toggle]");
   if (nav && toggle) {
     const label = $(".sr-only", toggle);
-    const icon = $("use", toggle);
     const setOpen = (open) => {
       nav.toggleAttribute("data-open", open);
       toggle.setAttribute("aria-expanded", String(open));
       label.textContent = open ? "Close menu" : "Open menu";
-      icon.setAttribute("href", open ? "#i-close" : "#i-menu");
       document.documentElement.style.overflow = open ? "hidden" : "";
     };
     toggle.addEventListener("click", () => setOpen(!nav.hasAttribute("data-open")));
