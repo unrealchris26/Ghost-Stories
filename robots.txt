@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /_source/
-Disallow: /emails/
-Disallow: /assets/og/
 
 Sitemap: https://ghoststories.vegas/sitemap.xml

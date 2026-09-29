@@ -42,14 +42,18 @@ save(load("1923-logo.png"), "logo-1923-prohibition-bar.webp", 520, 85, keep_alph
 save(load("Seat Image.jpg"), "about-stage-chair.webp", 1600, 72)
 # Contact section backdrop
 save(load("candle-hand.jpg"), "gallery-candle-in-the-dark.webp", 900, 72)
+GALLERY_NAMES = {3: "gallery-kent-axell-smoke-seance", 4: "gallery-seance-bell-candle-sconce", 5: "gallery-guest-watching-mind-reading",
+                 6: "gallery-guests-applauding-1923-prohibition-bar", 7: "gallery-seance-table-bell-cards", 9: "gallery-kent-axell-reaching-audience",
+                 10: "gallery-kent-axell-card-reading-guest", 11: "gallery-guest-gasp-seance"}
 # Gallery: square snapshots from _source/photos/gallery ("GS Snapshot N.jpg").
 # Each gets a full-size file (lightbox) and a 640px preview (grid). Never cropped.
 import glob
 for f in glob.glob(os.path.join(SRC, "gallery", "GS Snapshot *.jpg")):
     n = int(os.path.splitext(f)[0].split()[-1])
     im = Image.open(f).convert("RGB")
-    save(im, f"gallery-gs-{n:02d}.webp", 1080, 80)
-    save(im, f"gallery-gs-{n:02d}-640.webp", 640, 74)
+    name = GALLERY_NAMES.get(n, f"gallery-gs-{n:02d}")   # descriptive file names help image search
+    save(im, f"{name}.webp", 1080, 80)
+    save(im, f"{name}-640.webp", 640, 74)
 # Social share image
 # Social share image: rendered from assets/og/og-template.html (see README, SEO section)
 

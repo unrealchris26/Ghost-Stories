@@ -9,12 +9,17 @@
      contact form instead.
      ------------------------------------------------------------------ */
   const TICKETS_URL = "https://fareharbor.com/embeds/book/1923lv/items/463120/calendar/2026/09/?flow=875034&full-items=yes";
-  const LEAD_ENDPOINT = "/api/lead";   // Vercel function: api/lead.js
+  const LEAD_ENDPOINT = "/api/lead/";   // Vercel function: api/lead.js
   const SPEAKEASY_PASSWORD = "Houdini sent me.";
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  // Non-critical setup runs after load, when the browser is idle, so it never delays the first screen
+  const afterLoad = (fn) => {
+    const go = () => (window.requestIdleCallback || ((cb) => setTimeout(cb, 200)))(fn, { timeout: 2000 });
+    if (document.readyState === "complete") go(); else window.addEventListener("load", go, { once: true });
+  };
 
   /* Fog texture waits until everything important has loaded */
   const addFog = () => document.documentElement.classList.add("fog-ready");
@@ -113,15 +118,17 @@
   if (tape) {
     const TILE_RATIO = 1600 / 150;   // width / height of assets/img/marquee-tape.webp
     const list = $(".marquee__list", tape);
-    const sizeTape = () => {
-      const w = list.offsetWidth, h = tape.offsetHeight;
-      if (!w || !h) return;
-      const tiles = Math.max(1, Math.round(w / (h * TILE_RATIO)));
-      tape.style.backgroundSize = (w / tiles).toFixed(3) + "px 100%";
-    };
-    sizeTape();
-    if ("ResizeObserver" in window) new ResizeObserver(sizeTape).observe(list);
-    if (document.fonts) document.fonts.ready.then(sizeTape);
+    // Sizes come from the observer's own measurements: no forced layout at startup
+    let w = 0, h = 0;
+    if ("ResizeObserver" in window) {
+      new ResizeObserver((entries) => {
+        entries.forEach((e) => { if (e.target === list) w = e.contentRect.width; else h = e.contentRect.height; });
+        if (!w || !h) return;
+        const tiles = Math.max(1, Math.round(w / (h * TILE_RATIO)));
+        tape.style.backgroundSize = (w / tiles).toFixed(3) + "px 100%";
+      }).observe(list);
+      new ResizeObserver((entries) => entries.forEach((e) => { h = e.contentRect.height; })).observe(tape);
+    }
   }
 
   /* ------------------------------------------------------------------
@@ -142,13 +149,15 @@
     const phone = window.matchMedia("(max-width: 767.98px)");
     const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    // The stage's page position is measured only when layout changes (resize, fonts,
+    // hero size); per frame, progress comes from scrollY, which needs no layout.
+    let sceneTop = Infinity;
     const progress = () => {
-      const top = scene.getBoundingClientRect().top;
       const vh = window.innerHeight;
-      return clamp((vh - top) / (vh * 0.85), 0, 1);
+      return clamp((vh - (sceneTop - window.scrollY)) / (vh * 0.85), 0, 1);
     };
 
-    let current = progress();
+    let current = 0;
     let near = false;
     let running = false;
     stage.classList.add("is-armed");
@@ -161,6 +170,7 @@
       // Phones: the text sits above the stage, so the curtains cover only the stage
       const top = phone.matches ? scene.offsetTop + "px" : "";
       leftCurtain.style.top = rightCurtain.style.top = top;
+      sceneTop = scene.getBoundingClientRect().top + window.scrollY;
     };
 
     const render = (velocity) => {
@@ -178,14 +188,16 @@
     const tick = (now) => {
       const dt = last ? Math.min(now - last, 64) : 16;
       last = now;
-      const target = near ? progress() : current;
+      const target = progress();
       const prev = current;
       current += (target - current) * (1 - Math.exp(-dt / TAU));
       if (Math.abs(target - current) < 0.0002) current = target;
       render((current - prev) * (16 / dt));
-      if (near || current !== target) requestAnimationFrame(tick);
-      else { running = false; last = 0; }
+      if (current !== target) requestAnimationFrame(tick);
+      else { running = false; last = 0; }         // settled: stop until the next scroll
     };
+    const kick = () => { if (near && !running) { running = true; requestAnimationFrame(tick); } };
+    window.addEventListener("scroll", kick, { passive: true });
 
     // Phones: reveal the copy as soon as it enters the screen, independent of the curtains
     new IntersectionObserver(([entry], obs) => {
@@ -194,14 +206,17 @@
       obs.disconnect();
     }, { rootMargin: "0px 0px -8% 0px" }).observe($(".about-stage__content", stage));
 
-    measure();
-    render(0);
-    window.addEventListener("resize", () => { measure(); render(0); });
-    if (document.fonts) document.fonts.ready.then(() => { measure(); render(0); });   // text height can shift the stage
-    new IntersectionObserver(([entry]) => {
-      near = entry.isIntersecting;
-      if (near && !running) { running = true; requestAnimationFrame(tick); }
-    }, { rootMargin: "120px 0px" }).observe(stage);
+    render(0);                                      // closed; no layout read during startup
+    const remeasure = () => { measure(); kick(); };
+    requestAnimationFrame(() => { measure(); current = progress(); render(0); });
+    window.addEventListener("resize", remeasure);
+    if (document.fonts) document.fonts.ready.then(remeasure);   // text height can shift the stage
+    if ("ResizeObserver" in window) {
+      let queued = false;
+      new ResizeObserver(() => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; remeasure(); }); } })
+        .observe(document.querySelector(".hero") || stage);
+    }
+    new IntersectionObserver(([entry]) => { near = entry.isIntersecting; kick(); }, { rootMargin: "120px 0px" }).observe(stage);
   }
 
   /* Buttons whose right edge lines up with the end of the longest text line above
@@ -221,13 +236,14 @@
       }
       return right;
     };
+    const phoneMq = window.matchMedia("(max-width: 767.98px)");   // no layout read, unlike innerWidth
     const alignAll = () => {
       alignEnds.forEach((a) => (a.btn.style.marginLeft = ""));
-      if (window.innerWidth < 768) return;   // phones: buttons are centred in CSS
+      if (phoneMq.matches) return;   // phones: buttons are centred in CSS
       const reads = alignEnds.map((a) => ({ a, ink: inkRight(a.text), left: a.wrap.getBoundingClientRect().left, w: a.btn.offsetWidth }));
       reads.forEach(({ a, ink, left, w }) => { a.btn.style.marginLeft = Math.max(0, ink - left - w) + "px"; });
     };
-    alignAll();
+    // The ResizeObserver fires once on its own after first layout, so no startup call
     if (document.fonts) document.fonts.ready.then(alignAll);
     if ("ResizeObserver" in window) {
       let queued = false;
@@ -244,8 +260,7 @@
       const text = $(".review__text", r);
       $(".review__more", r).toggleAttribute("data-off", text.scrollHeight <= text.clientHeight + 1);
     });
-    syncMore();
-    if (document.fonts) document.fonts.ready.then(syncMore);
+    afterLoad(syncMore);
     window.addEventListener("resize", syncMore);
     $$(".review__more", reviewsSection).forEach((btn) => btn.addEventListener("click", () => {
       const review = btn.closest(".review");
@@ -290,6 +305,17 @@
       if (open && extra[0]) $("summary", extra[0]).focus();
     });
   }
+
+  /* Click-to-load maps: the Google iframe only loads when asked for */
+  $$("[data-map-facade]").forEach((box) => {
+    const btn = $("button", box);
+    btn.addEventListener("click", () => {
+      const f = document.createElement("iframe");
+      f.src = box.dataset.src; f.title = box.dataset.title || "Map";
+      f.loading = "lazy"; f.referrerPolicy = "no-referrer-when-downgrade";
+      box.append(f); btn.remove();
+    });
+  });
 
   /* Year */
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
@@ -386,8 +412,10 @@
   };
 
   const matTargets = $$("[data-materialize]");
-  if (!reduceMotion.matches && "IntersectionObserver" in window && Element.prototype.animate) {
-    matTargets.forEach(splitWords);
+  if (!reduceMotion.matches && "IntersectionObserver" in window && Element.prototype.animate) afterLoad(() => {
+    // Headings already on screen stay as they are; the rest materialize when scrolled to
+    const below = matTargets.filter((el) => el.getBoundingClientRect().top > window.innerHeight);
+    below.forEach(splitWords);
     const io = new IntersectionObserver((entries, obs) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -395,8 +423,8 @@
         materialize(entry.target);
       });
     }, { threshold: 0.35 });
-    matTargets.forEach((el) => io.observe(el));
-  }
+    below.forEach((el) => io.observe(el));
+  });
 
   /* ------------------------------------------------------------------
      Séance quote: spelled out letter by letter, as if by planchette

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ghoststories.vegas/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://ghoststories.vegas/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://ghoststories.vegas/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ghoststories.vegas/</loc><lastmod>2026-09-30</lastmod><priority>1.0</priority></url>
+  <url><loc>https://ghoststories.vegas/private-seances/</loc><lastmod>2026-09-30</lastmod><priority>0.8</priority></url>
+  <url><loc>https://ghoststories.vegas/faq/</loc><lastmod>2026-09-30</lastmod><priority>0.7</priority></url>
+  <url><loc>https://ghoststories.vegas/about-kent-axell/</loc><lastmod>2026-09-30</lastmod><priority>0.7</priority></url>
+  <url><loc>https://ghoststories.vegas/haunted-las-vegas/the-real-haunted-history-of-las-vegas/</loc><lastmod>2026-09-30</lastmod><priority>0.6</priority></url>
+  <url><loc>https://ghoststories.vegas/haunted-las-vegas/what-happens-at-a-seance/</loc><lastmod>2026-09-30</lastmod><priority>0.6</priority></url>
+  <url><loc>https://ghoststories.vegas/haunted-las-vegas/speakeasies-spirits-and-the-1920s/</loc><lastmod>2026-09-30</lastmod><priority>0.6</priority></url>
+  <url><loc>https://ghoststories.vegas/haunted-las-vegas/</loc><lastmod>2026-09-30</lastmod><priority>0.7</priority></url>
+  <url><loc>https://ghoststories.vegas/privacy/</loc><lastmod>2026-09-30</lastmod><priority>0.2</priority></url>
+  <url><loc>https://ghoststories.vegas/terms/</loc><lastmod>2026-09-28</lastmod><priority>0.2</priority></url>
 </urlset>
