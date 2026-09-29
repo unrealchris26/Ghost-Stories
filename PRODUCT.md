@@ -3,7 +3,7 @@
 Inferred from the client brief (no interview held); assumptions are marked.
 
 - **What:** Marketing site for Kent Axell's intimate show "Ghost Stories: Is Seeing Really Believing?" at 1923 Prohibition Bar inside Mandalay Bay, Las Vegas. Ages 21+.
-- **Tagline:** "The show that follows you home."
+- **Tagline:** retired (was "The show that follows you home.")
 - **Visitors:** Las Vegas visitors and locals deciding on an evening show; planners of private séances, corporate groups and celebrations.
 - **Jobs:** sell tickets to the nightly show; capture private séance / group / occasion enquiries into GoHighLevel; grow a newsletter list.
 - **Mode:** Persuade.

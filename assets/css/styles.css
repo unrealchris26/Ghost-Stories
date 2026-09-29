@@ -1209,7 +1209,6 @@ textarea { resize: vertical; min-height: 7rem; }
 .footer__bottom p { margin: 0; }
 .footer__bottom a { text-decoration: none; }
 .footer__bottom a:hover { color: var(--candle); text-decoration: underline; }
-.footer__tagline { font-family: var(--f-type); color: var(--gold); }
 
 /* Planchette easter egg */
 .planchette { margin-top: 1.6rem; }
@@ -1333,8 +1332,7 @@ textarea { resize: vertical; min-height: 7rem; }
   .field--full { grid-column: 1 / -1; }
   .newsletter__row { grid-template-columns: 1fr auto; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
-  .footer__bottom { grid-template-columns: auto 1fr auto; align-items: center; }
-  .footer__tagline { text-align: center; }
+  .footer__bottom { grid-template-columns: 1fr auto; align-items: center; }
 }
 @media (min-width: 768px) {
   .case-files { max-width: 34rem; margin-inline: auto; }
