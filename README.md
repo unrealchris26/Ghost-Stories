@@ -1,10 +1,10 @@
 # Ghost Stories: Is Seeing Really Believing?
 
 Show website for Kent Axell's **Ghost Stories** at 1923 Prohibition Bar, inside Mandalay Bay, Las Vegas.
-Static HTML, CSS and vanilla JS, deployed on Netlify, with one Netlify Function that sends form leads to GoHighLevel.
+Static HTML, CSS and vanilla JS, deployed on Vercel, with one Vercel Function (`api/lead.js`) that sends newsletter sign-ups to a GoHighLevel inbound webhook. Ticket buttons link to FareHarbor.
 
 ```
-index.html          Home page (all 16 sections)
+index.html          Home page
 privacy.html        Privacy Policy     ┐ generated from index.html's header/footer
 terms.html          Terms & Conditions │ by _source/build_pages.py
 404.html            Not-found page     ┘
@@ -12,53 +12,46 @@ assets/css/styles.css
 assets/js/main.js
 assets/img/         Optimized WebP images + generated textures
 assets/fonts/       Enigma + self-hosted Google Fonts (latin subsets)
-assets/video/       Trailer / clip files
-netlify/functions/lead.mjs
-netlify.toml
-_source/            Original photos, reference screenshot, rebuild scripts (never served)
+assets/video/       Trailer file
+api/lead.js         Vercel Function: newsletter form -> GoHighLevel webhook
+_source/            Rebuild scripts (raw photos stay local, see .gitignore)
+netlify.toml        Legacy Netlify config, not used on Vercel
 ```
 
 ## Run it locally
 
-Any static server works:
+Any static server works for the pages:
 
 ```bash
 npx serve .            # or: python -m http.server 8000
 ```
 
-The forms need the Netlify function, so to test them locally use the Netlify CLI:
+The newsletter form needs the function. To test it locally, use the Vercel CLI (`npm i -g vercel`, then `vercel dev`) with `GHL_WEBHOOK_URL` in a local `.env` file (already git-ignored).
 
-```bash
-npm i -g netlify-cli
-netlify dev            # reads GHL_TOKEN / GHL_LOCATION_ID from your Netlify site or a local .env
-```
+## Deploy (Vercel from GitHub)
 
-## Deploy (Netlify from GitHub)
+1. In Vercel: **Add New → Project**, import the GitHub repo. Framework preset: **Other**. No build command or output directory needed.
+2. Add the environment variable below, then deploy (or redeploy, if the site was already live: environment variables only apply to new deployments).
 
-1. Push this folder to a GitHub repo.
-2. In Netlify: **Add new site → Import from Git**, pick the repo. No build command is needed; `netlify.toml` sets the publish directory (`.`) and functions directory.
-3. Add the environment variables below, then trigger a deploy.
+## GoHighLevel webhook
 
-## GoHighLevel environment variables
-
-Set these in **Netlify → Site configuration → Environment variables**:
+Set this in **Vercel → Project → Settings → Environment Variables** (Production, and Preview if you want previews to send sign-ups too):
 
 | Variable | Value |
 | --- | --- |
-| `GHL_TOKEN` | A Private Integration token (Settings → Private Integrations) with the `contacts.write` scope |
-| `GHL_LOCATION_ID` | The sub-account's Location ID (Settings → Business Profile) |
+| `GHL_WEBHOOK_URL` | The workflow's Inbound Webhook URL, e.g. `https://services.leadconnectorhq.com/hooks/.../webhook-trigger/...` |
 
-In GHL, create these contact custom fields with exactly these keys (Settings → Custom Fields):
-`event_date`, `event_type`, `event_details`.
+The URL is deliberately not in the code: the repo is public, and anyone holding the URL could create contacts.
 
-What the function sends (`POST /.netlify/functions/lead` → `contacts/upsert`):
+What `POST /api/lead` forwards to the webhook, as JSON:
 
-- `source: "ghost-stories-site"`
-- Booking form: name, email, phone, the three custom fields, tags `ghost-stories`, `booking-inquiry`, `event: <type>`
-- Newsletter form: email, tags `ghost-stories`, `newsletter`
-- A hidden honeypot field (`company`) silently drops bot submissions.
+- `email`, lowercased
+- `source`: `"ghost-stories-site"`
+- `form_type`: `"newsletter"`
+- `page`: the page path the sign-up came from
+- `submitted_at`: ISO timestamp
 
-If a submission fails, check **Netlify → Logs → Functions → lead**. The function logs GHL's response body.
+In the GHL workflow, map `email` to the contact's email in the Inbound Webhook trigger, then add whatever tags or actions you want. A hidden honeypot field (`company`) silently drops bot submissions.
 
 ## Swapping images
 

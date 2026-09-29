@@ -9,7 +9,7 @@
      contact form instead.
      ------------------------------------------------------------------ */
   const TICKETS_URL = "https://fareharbor.com/embeds/book/1923lv/items/463120/calendar/2026/09/?flow=875034&full-items=yes";
-  const LEAD_ENDPOINT = "/.netlify/functions/lead";
+  const LEAD_ENDPOINT = "/api/lead";   // Vercel function: api/lead.js
   const SPEAKEASY_PASSWORD = "Houdini sent me.";
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
