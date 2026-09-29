@@ -1,0 +1,20 @@
+node_modules/
+.netlify/
+.env
+.DS_Store
+Thumbs.db
+__pycache__/
+
+# Editor settings
+.vscode/
+
+# Raw source photos and references (large; build scripts in _source/ read them locally)
+_source/photos/
+_source/reference/
+_source/originals/
+
+# Loose working images in the project root (not used by the site)
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
