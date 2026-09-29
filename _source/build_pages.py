@@ -15,7 +15,7 @@ import json
 import os
 import re
 
-SITE = "https://ghoststories.vegas"
+SITE = "https://www.ghoststories.show"
 OG_IMG = SITE + "/assets/img/og-image.jpg"
 TICKETS = "https://fareharbor.com/embeds/book/1923lv/items/463120/calendar/2026/09/?flow=875034&amp;full-items=yes"
 MAP_EMBED = "https://maps.google.com/maps?cid=5652075586288388436&amp;hl=en&amp;output=embed"

@@ -10,7 +10,7 @@ import datetime as dt
 import json
 import re
 
-SITE = "https://ghoststories.vegas"
+SITE = "https://www.ghoststories.show"
 TICKETS = "https://fareharbor.com/embeds/book/1923lv/items/463120/calendar/2026/09/?flow=875034&full-items=yes"
 SHOWS = {4: "18:00", 5: "18:00", 6: "20:00"}   # weekday (Mon=0): start time  -> Fri 6pm, Sat 6pm, Sun 8pm
 DURATION_MIN = 100
@@ -48,7 +48,7 @@ for i in range(1, WEEKS * 7 + 1):
         "@context": "https://schema.org",
         "@type": "TheaterEvent",
         "name": "Ghost Stories: Is Seeing Really Believing?",
-        "description": "An intimate evening of true ghost stories, psychological illusion, and a séance with Kent Axell at 1923 Prohibition Bar inside Mandalay Bay, Las Vegas. Ages 21+.",
+        "description": "Mind reading, psychological illusion and a séance with Kent Axell at 1923 Prohibition Bar inside Mandalay Bay, Las Vegas. Only 40 seats. Ages 21+.",
         "startDate": start.strftime("%Y-%m-%dT%H:%M") + off,
         "endDate": end.strftime("%Y-%m-%dT%H:%M") + off,
         "eventStatus": "https://schema.org/EventScheduled",

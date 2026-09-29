@@ -88,8 +88,8 @@ Keep these identical in the footer, the Private Séances page, the schema and th
 1923 Prohibition Bar, Mandalay Bay Resort & Casino, 3930 S Las Vegas Blvd #101, Las Vegas, NV 89119, (702) 586-8925, info@1923lv.com.
 
 ### Hosting (Vercel)
-- `vercel.json`: `trailingSlash` (one URL per page), www to non-www redirect, old `.html` redirects, long cache for fonts/images/video, revalidation for CSS/JS, and security headers (HSTS, nosniff, referrer policy, frame options, permissions policy).
-- HTTP to HTTPS is automatic on Vercel. In **Vercel → Project → Settings → Domains**, add both `ghoststories.vegas` and `www.ghoststories.vegas` and set the apex as primary.
+- `vercel.json`: `trailingSlash` (one URL per page), old `.html` redirects, long cache for fonts/images/video, revalidation for CSS/JS, and security headers (HSTS, nosniff, referrer policy, frame options, permissions policy).
+- HTTP to HTTPS is automatic on Vercel. The live site is `https://www.ghoststories.show`; in **Vercel → Project → Settings → Domains**, `ghoststories.show` redirects to `www` (already set up). Every canonical and share URL uses the `www` address.
 
 ### Share image
 `assets/img/og-image.jpg` (1200x630) is a placeholder rendered from `assets/og/og-template.html`. Open the template at exactly 1200x630 (add `?guides` to see the 1000x500 safe zone), screenshot it and save over the JPG. **After every deploy that changes share tags or the image**, re-scrape: Facebook and LinkedIn cache old previews.
@@ -97,13 +97,12 @@ Keep these identical in the footer, the Private Séances page, the schema and th
 - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
 
 ### Off-site checklist (for you)
-- [ ] Point `ghoststories.vegas` at the Vercel project (see Hosting above).
 - [ ] Claim and optimize the **Google Business Profile**: exact NAP above, category (e.g. "Performing arts theater" / "Entertainer"), hours matching showtimes, photos, ticket link, and weekly posts.
-- [ ] **Google Search Console:** verify the domain, submit `https://ghoststories.vegas/sitemap.xml`, and request indexing for the homepage.
+- [ ] **Google Search Console:** verify the domain, submit `https://www.ghoststories.show/sitemap.xml`, and request indexing for the homepage.
 - [ ] **Bing Webmaster Tools:** import from Search Console or verify, then submit the sitemap.
 - [ ] Get listed on Las Vegas show directories and ticket/attraction sites (e.g. Vegas.com, Tripadvisor, Yelp, Eventbrite/Google "Things to do" via the ticketing partner), using the same NAP.
 - [ ] Ask happy guests for **Google reviews** (a QR code at the bar and a line in the post-show email).
-- [ ] Ask Mandalay Bay / 1923 Prohibition Bar to link to `ghoststories.vegas` from their event listings.
+- [ ] Ask Mandalay Bay / 1923 Prohibition Bar to link to `www.ghoststories.show` from their event listings.
 
 ### Lighthouse (last local run)
 - Desktop homepage: Performance 100, Accessibility 100, Best Practices 100, SEO 100.
@@ -117,7 +116,6 @@ Keep these identical in the footer, the Private Séances page, the schema and th
 - [ ] Private séance pricing, group sizes and minimums on `/private-seances/`.
 - [ ] Confirm FAQ answers with the venue: arrival time, parking, refunds, accessibility.
 - [ ] Replace the placeholder share image with a final design.
-- [ ] The homepage descriptions still include "The show that follows you home." (retired elsewhere); remove it if you want the tagline gone everywhere.
 - [ ] "The Venetian Resorts Las Vegas" appears in the footer contact list; if the show is not performed there, remove it so the NAP stays consistent.
 
 ## Swapping images
